@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <style>
+      .bar {
+        fill: #469cb4;
+      }
+      .bar text {
+        fill: #444444;
+        font-family: "Open Sans";
+        font-size: 9px;
+      }
+      .axis--x {
+        font-family: "Open Sans";
+        font-size: 9px;
+        color: #666;
+        cursor: pointer;
+      }
+      div.tooltip {
+        position: absolute;
+        text-align: center;
+        min-width: 60px;
+        font-size: 14px;
+        color: #fff;
+        font-family: "Open Sans";
+        padding: 6px 12px;
+        background: #444444;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+<body>
+  <svg width="960" height="500"></svg>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/lodash/4.17.3/lodash.min.js"></script>
+  <script>
+    var div = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+    var svg = d3.select("svg");
+    var margin = {top: 20, right: 20, bottom: 30, left: 40};
+    var width = +svg.attr("width") - margin.left - margin.right;
+    var height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var x = d3.scaleBand().rangeRound([0, width]).padding(0.1);
+    var y = d3.scaleLinear().rangeRound([height, 0]);
+
+    var graph = svg.append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var data = [
+      {id: "cat1cat1cat1cat1cat1cat1", count: 12},
+      {id: "cat2cat2cat2cat2cat2cat2", count: 23},
+      {id: "cat3cat3cat3cat3cat3cat3", count: 1},
+      {id: "cat4cat4cat4cat4", count: 4},
+      {id: "cat5", count: 30},
+      {id: "cat6cat6cat6", count: 3},
+      {id: "cat7", count: 0},
+      {id: "cat8cat8", count: 100}
+    ];
+
+    data.forEach(function (item, i) {
+      item.shortId = item.id;
+    });
+
+    x.domain(data.map(function(d) { return d.shortId; }));
+    y.domain([0, d3.max(data, function(d) { return d.count; })]);
+
+    graph.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+
+
+    var labels = graph.selectAll(".tick")
+      .on("mouseover", function (d) {
+        div.transition().duration(200).style("opacity", 0.9)
+        div.html(findId(d)).attr("class", "tooltip").style("top", height).style("left", x(d) + 40)
+      })
+      .on("mouseout", function (d) {
+         div.transition().duration(500).style("opacity", 0)
+      })
+
+    var bar = graph.selectAll(".bar")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("class", "bar")
+      .attr("transform", function(d) {
+        return "translate(" + x(d.shortId) + "," + y(d.count) + ")";
+      });
+
+    bar.append("rect")
+      .attr("x", 1)
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) {
+        return height - y(d.count);
+      });
+
+    bar.append("text")
+      .attr("dy", ".75em")
+      .attr("y", -12)
+      .attr("x", x.bandwidth() / 2)
+      .attr("text-anchor", "middle")
+      .text(function (d) {
+        return d.count;
+      })
+
+      function findId(shortId) {
+        var item = _.find(data, {shortId: shortId});
+        return item.id;
+      }
+  </script>
+</body>
+</html>
