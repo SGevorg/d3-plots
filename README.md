@@ -2,9 +2,11 @@
 
 Set of standalone [D3](https://d3js.org/) plots inspired by Mike Bostok's [examples](http://bl.ocks.org/mbostock).
 
-## Install
+## Available Plots
 
-- No need to install, can see the demo [here](https://SGevorg.github.io/d3-plots/)
+- [Bar chart](https://SGevorg.github.io/d3-plots/bar-chart)
+- [Double line chart](https://SGevorg.github.io/d3-plots/double-line-chart)
+- [ROC curve](https://SGevorg.github.io/d3-plots/roc-curve)
 
 ## License
 
